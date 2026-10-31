@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>STILL — Personal Planner</title>
+
+<style>
+  :root {
+    --paper: #F5F3EE;
+    --surface: #FCFBF8;
+    --ink: #252724;
+    --muted: #77766F;
+    --line: #DEDAD2;
+
+    --blue: #34485A;
+    --wine: #6B3E3B;
+    --green: #4B5944;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard",
+      "Noto Sans KR", sans-serif;
+  }
+
+  .app {
+    width: min(100%, 500px);
+    min-height: 100vh;
+    margin: auto;
+    padding: 34px 28px 50px;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 70px;
+  }
+
+  .brand {
+    font-family: Georgia, serif;
+    font-size: 17px;
+    letter-spacing: 2px;
+  }
+
+  .date {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Main */
+  .label {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  .task-title {
+    font-family: Georgia, "Noto Serif KR", serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.35;
+    margin-bottom: 10px;
+  }
+
+  .task-detail {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 45px;
+  }
+
+  /* Timer */
+  .timer {
+    text-align: center;
+    margin: 25px 0 30px;
+  }
+
+  .time {
+    font-family: Georgia, serif;
+    font-size: 58px;
+    letter-spacing: -2px;
+    color: var(--blue);
+  }
+
+  .timer-label {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* Buttons */
+  button {
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .primary {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: var(--blue);
+    border: 1px solid var(--blue);
+    color: #F8F7F2;
+    border-radius: 6px;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  .primary:hover {
+    opacity: 0.9;
+  }
+
+  .text-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 18px;
+  }
+
+  .text-button {
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    padding: 5px 0;
+    font-size: 12px;
+  }
+
+  .focus-break {
+    color: var(--wine);
+  }
+
+  /* Course */
+  .section {
+    margin-top: 65px;
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .step {
+    position: relative;
+    padding: 0 0 22px 25px;
+    font-size: 14px;
+  }
+
+  .step::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 5px;
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+  }
+
+  .step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 16px;
+    width: 1px;
+    height: 19px;
+    background: var(--line);
+  }
+
+  .step.done {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+
+  .step.done::before {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .step.current {
+    color: var(--blue);
+    font-weight: 600;
+  }
+
+  .step.current::before {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+
+  /* Memo */
+  .memo-box {
+    margin-top: 25px;
+    display: none;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 80px;
+    resize: none;
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    color: var(--ink);
+    font: inherit;
+    font-size: 13px;
+  }
+
+  /* Modal */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 30, 25, 0.18);
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal {
+    width: min(100%, 500px);
+    background: var(--surface);
+    padding: 30px 28px 40px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .modal h2 {
+    font-family: Georgia, "Noto Serif KR", serif;
+    font-weight: 400;
+    margin: 0 0 10px;
+  }
+
+  .modal p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+
+  .option {
+    width: 100%;
+    text-align: left;
+    padding: 14px 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+  }
+
+  .close {
+    margin-top: 20px;
+    color: var(--muted);
+  }
+
+  /* Add course */
+  .add-area {
+    margin-top: 55px;
+    text-align: center;
+  }
+
+  .add-button {
+    background: transparent;
+    border: 0;
+    color: var(--blue);
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  #courseInput {
+    display: none;
+    margin-top: 20px;
+  }
+
+  input {
+    width: 100%;
+    padding: 13px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    font: inherit;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+    <div class="brand">STILL</div>
+    <div class="date" id="date"></div>
+  </header>
+
+  <main>
+    <div class="label">CURRENTLY</div>
+
+    <div class="task-title" id="currentTask">
+      아직 시작한 코스가 없습니다.
+    </div>
+
+    <div class="task-detail" id="taskDetail">
+      새로운 일을 작은 단계로 만들어 보세요.
+    </div>
+
+    <div class="timer">
+      <div class="time" id="timer">25:00</div>
+      <div class="timer-label">현재 단계와 함께 흐르는 시간</div>
+    </div>
+
+    <button class="primary" id="startButton" onclick="toggleTimer()">
+      START →
+    </button>
+
+    <div class="text-buttons">
+      <button class="text-button" onclick="toggleMemo()">
+        메모
+      </button>
+
+      <button class="text-button focus-break" onclick="openFocusModal()">
+        집중이 안 됨
+      </button>
+
+      <button class="text-button" onclick="completeStep()">
+        완료 →
+      </button>
+    </div>
+
+    <div class="memo-box" id="memoBox">
+      <textarea id="memo"
+        placeholder="짧게 남겨두세요. 다음에 돌아왔을 때 도움이 될 만큼만."></textarea>
+    </div>
+
+    <section class="section">
+      <div class="section-title">THE COURSE</div>
+      <div id="courseList"></div>
+    </section>
+
+    <div class="add-area">
+      <button class="add-button" onclick="showCourseInput()">
+        + 새로운 코스 만들기
+      </button>
+
+      <div id="courseInput">
+        <input
+          id="newCourse"
+          placeholder="무엇을 시작하고 싶나요?"
+          onkeydown="if(event.key === 'Enter') createCourse()"
+        >
+      </div>
+    </div>
+  </main>
+
+</div>
+
+
+<!-- 집중이 안 될 때 -->
+<div class="modal-bg" id="focusModal">
+  <div class="modal">
+    <h2>잠깐 멈춰도 됩니다.</h2>
+    <p>
+      지금 필요한 것은 의지가 아니라,
+      다음 행동을 조금 바꾸는 것일 수도 있습니다.
+    </p>
+
+    <button class="option" onclick="reduceTask()">
+      5분만 시작하기
+    </button>
+
+    <button class="option" onclick="minimumTask()">
+      오늘의 최소 행동으로 줄이기
+    </button>
+
+    <button class="option" onclick="pauseTask()">
+      여기서 잠시 멈추기
+    </button>
+
+    <button class="text-button close" onclick="closeFocusModal()">
+      닫기
+    </button>
+  </div>
+</div>
+
+
+<script>
+
+  /* -------------------------
+     기본 데이터
+  ------------------------- */
+
+  let course = [];
+  let currentIndex = 0;
+
+  let seconds = 25 * 60;
+  let timerRunning = false;
+  let timerInterval;
+
+
+  /* 날짜 표시 */
+  const today = new Date();
+
+  document.getElementById("date").textContent =
+    today.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric"
+    });
+
+
+  /* -------------------------
+     코스 만들기
+  ------------------------- */
+
+  function showCourseInput() {
+    const inputArea = document.getElementById("courseInput");
+
+    inputArea.style.display =
+      inputArea.style.display === "block" ? "none" : "block";
+
+    document.getElementById("newCourse").focus();
+  }
+
+
+  function createCourse() {
+
+    const input = document.getElementById("newCourse");
+    const goal = input.value.trim();
+
+    if (!goal) {
+      return;
+    }
+
+    /*
+      현재는 간단한 규칙 기반 코스 생성.
+      나중에 실제 AI API와 연결하면
+      이 부분을 AI가 만든 단계로 바꾸면 됨.
+    */
+
+    course = [
+      "준비하기",
+      goal + " 시작하기",
+      "중간 상태 확인하기",
+      goal + " 마무리하기"
+    ];
+
+    currentIndex = 0;
+
+    input.value = "";
+    document.getElementById("courseInput").style.display = "none";
+
+    renderCourse();
+    updateCurrentTask();
+
+    resetTimer();
+  }
+
+
+  /* -------------------------
+     코스 화면 표시
+  ------------------------- */
+
+  function renderCourse() {
+
+    const list = document.getElementById("courseList");
+
+    list.innerHTML = "";
+
+    course.forEach((step, index) => {
+
+      const stepElement = document.createElement("div");
+
+      stepElement.className = "step";
+
+      if (index < currentIndex) {
+        stepElement.classList.add("done");
+      }
+
+      if (index === currentIndex) {
+        stepElement.classList.add("current");
+      }
+
+      stepElement.textContent = step;
+
+      list.appendChild(stepElement);
+    });
+  }
+
+
+  function updateCurrentTask() {
+
+    const currentTask =
+      document.getElementById("currentTask");
+
+    const taskDetail =
+      document.getElementById("taskDetail");
+
+    if (course.length === 0) {
+      currentTask.textContent =
+        "아직 시작한 코스가 없습니다.";
+
+      taskDetail.textContent =
+        "새로운 일을 작은 단계로 만들어 보세요.";
+
+      return;
+    }
+
+    if (currentIndex >= course.length) {
+      currentTask.textContent =
+        "오늘의 코스를 마쳤습니다.";
+
+      taskDetail.textContent =
+        "다음에 이어갈 일은 새로운 코스로 만들 수 있습니다.";
+
+      return;
+    }
+
+    currentTask.textContent = course[currentIndex];
+
+    taskDetail.textContent =
+      `단계 ${currentIndex + 1} / ${course.length}`;
+  }
+
+
+  /* -------------------------
+     단계 완료
+  ------------------------- */
+
+  function completeStep() {
+
+    if (course.length === 0) {
+      return;
+    }
+
+    if (currentIndex < course.length) {
+      currentIndex++;
+    }
+
+    renderCourse();
+    updateCurrentTask();
+
+    resetTimer();
+
+    document.getElementById("memo").value = "";
+  }
+
+
+  /* -------------------------
+     타이머
+  ------------------------- */
+
+  function updateTimerDisplay() {
+
+    const minutes =
+      Math.floor(seconds / 60);
+
+    const remainingSeconds =
+      seconds % 60;
+
+    document.getElementById("timer").textContent =
+      `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+  }
+
+
+  function toggleTimer() {
+
+    if (timerRunning) {
+
+      clearInterval(timerInterval);
+      timerRunning = false;
+
+      document.getElementById("startButton").textContent =
+        "CONTINUE →";
+
+      return;
+    }
+
+    timerRunning = true;
+
+    document.getElementById("startButton").textContent =
+      "PAUSE";
+
+    timerInterval = setInterval(() => {
+
+      if (seconds > 0) {
+
+        seconds--;
+        updateTimerDisplay();
+
+      } else {
+
+        clearInterval(timerInterval);
+
+        timerRunning = false;
+
+        document.getElementById("startButton").textContent =
+          "TIME IS UP";
+
+        alert("시간이 끝났습니다. 하지만 할 일이 끝난 것은 아닙니다.");
+      }
+
+    }, 1000);
+  }
+
+
+  function resetTimer() {
+
+    clearInterval(timerInterval);
+
+    timerRunning = false;
+
+    seconds = 25 * 60;
+
+    updateTimerDisplay();
+
+    document.getElementById("startButton").textContent =
+      "START →";
+  }
+
+
+  /* -------------------------
+     메모
+  ------------------------- */
+
+  function toggleMemo() {
+
+    const memoBox =
+      document.getElementById("memoBox");
+
+    memoBox.style.display =
+      memoBox.style.display === "block"
+        ? "none"
+        : "block";
+  }
+
+
+  /* -------------------------
+     집중이 안 될 때
+  ------------------------- */
+
+  function openFocusModal() {
+    document.getElementById("focusModal").style.display =
+      "flex";
+  }
+
+  function closeFocusModal() {
+    document.getElementById("focusModal").style.display =
+      "none";
+  }
+
+
+  function reduceTask() {
+
+    closeFocusModal();
+
+    document.getElementById("taskDetail").textContent =
+      "지금은 이 일에 5분만 써도 충분합니다.";
+
+    seconds = 5 * 60;
+
+    updateTimerDisplay();
+  }
+
+
+  function minimumTask() {
+
+    closeFocusModal();
+
+    if (course.length > 0 &&
+        currentIndex < course.length) {
+
+      document.getElementById("currentTask").textContent =
+        course[currentIndex] + " — 가장 작은 부분만";
+
+      document.getElementById("taskDetail").textContent =
+        "오늘은 여기까지만 해도 됩니다.";
+    }
+  }
+
+
+  function pauseTask() {
+
+    clearInterval(timerInterval);
+
+    timerRunning = false;
+
+    document.getElementById("startButton").textContent =
+      "WHEN YOU RETURN →";
+
+    closeFocusModal();
+
+    document.getElementById("taskDetail").textContent =
+      "여기서 멈췄습니다. 돌아오면 이어서 시작할 수 있습니다.";
+  }
+
+
+  updateTimerDisplay();
+
+</script>
+
+</body>
+</html>
