@@ -3,293 +3,490 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>STILL — Personal Planner</title>
+<title>STILL — Planner</title>
 
 <style>
-  :root {
-    --paper: #F5F3EE;
-    --surface: #FCFBF8;
-    --ink: #252724;
-    --muted: #77766F;
-    --line: #DEDAD2;
+:root {
+  --paper: #F5F3EE;
+  --surface: #FCFBF8;
+  --ink: #292A27;
+  --muted: #85827B;
+  --line: #DEDAD2;
 
-    --blue: #34485A;
-    --wine: #6B3E3B;
-    --green: #4B5944;
-  }
+  --blue: #34485A;
+  --wine: #704542;
+  --green: #4D5A47;
+}
 
-  * {
-    box-sizing: border-box;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Pretendard",
-      "Noto Sans KR", sans-serif;
-  }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard",
+               "Noto Sans KR", sans-serif;
+}
 
-  .app {
-    width: min(100%, 500px);
-    min-height: 100vh;
-    margin: auto;
-    padding: 34px 28px 50px;
-  }
+button, input, textarea {
+  font: inherit;
+}
 
-  /* Header */
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 70px;
-  }
+button {
+  cursor: pointer;
+}
 
-  .brand {
-    font-family: Georgia, serif;
-    font-size: 17px;
-    letter-spacing: 2px;
-  }
+/* 전체 앱 */
+.app {
+  width: min(100%, 560px);
+  min-height: 100vh;
+  margin: auto;
+  padding: 32px 28px 50px;
+}
 
-  .date {
-    font-size: 12px;
-    color: var(--muted);
-  }
+/* 화면 전환 */
+.screen {
+  display: none;
+}
 
-  /* Main */
-  .label {
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    color: var(--muted);
-    margin-bottom: 18px;
-  }
+.screen.active {
+  display: block;
+}
 
-  .task-title {
-    font-family: Georgia, "Noto Serif KR", serif;
-    font-size: 28px;
-    font-weight: 400;
-    line-height: 1.35;
-    margin-bottom: 10px;
-  }
+/* 헤더 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 65px;
+}
 
-  .task-detail {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 45px;
-  }
+.brand {
+  font-family: Georgia, serif;
+  letter-spacing: 2px;
+  font-size: 17px;
+}
 
-  /* Timer */
-  .timer {
-    text-align: center;
-    margin: 25px 0 30px;
-  }
+.date {
+  font-size: 12px;
+  color: var(--muted);
+}
 
-  .time {
-    font-family: Georgia, serif;
-    font-size: 58px;
-    letter-spacing: -2px;
-    color: var(--blue);
-  }
+/* 작은 라벨 */
+.label {
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  color: var(--muted);
+  margin-bottom: 15px;
+}
 
-  .timer-label {
-    margin-top: 8px;
-    font-size: 11px;
-    color: var(--muted);
-  }
+/* -------------------------
+   튜토리얼
+------------------------- */
 
-  /* Buttons */
-  button {
-    font: inherit;
-    cursor: pointer;
-  }
+#tutorial {
+  min-height: 100vh;
+  padding-top: 15vh;
+}
 
-  .primary {
-    display: block;
-    width: 100%;
-    padding: 15px;
-    background: var(--blue);
-    border: 1px solid var(--blue);
-    color: #F8F7F2;
-    border-radius: 6px;
-    font-size: 13px;
-    letter-spacing: 0.5px;
-  }
+.tutorial-number {
+  color: var(--blue);
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 35px;
+}
 
-  .primary:hover {
-    opacity: 0.9;
-  }
+.tutorial-title {
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.35;
+  margin-bottom: 18px;
+}
 
-  .text-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 18px;
-  }
+.tutorial-text {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+  max-width: 330px;
+}
 
-  .text-button {
-    border: 0;
-    background: transparent;
-    color: var(--muted);
-    padding: 5px 0;
-    font-size: 12px;
-  }
+.tutorial-bottom {
+  position: absolute;
+  bottom: 55px;
+  left: 28px;
+  right: 28px;
+  max-width: 504px;
+  margin: auto;
+}
 
-  .focus-break {
-    color: var(--wine);
-  }
+.dots {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+}
 
-  /* Course */
-  .section {
-    margin-top: 65px;
-    border-top: 1px solid var(--line);
-    padding-top: 22px;
-  }
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line);
+}
 
-  .section-title {
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    color: var(--muted);
-    margin-bottom: 20px;
-  }
+.dot.active {
+  background: var(--blue);
+}
 
-  .step {
-    position: relative;
-    padding: 0 0 22px 25px;
-    font-size: 14px;
-  }
+.primary-button {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid var(--blue);
+  border-radius: 6px;
+  background: var(--blue);
+  color: #FAF9F5;
+  letter-spacing: 0.8px;
+  font-size: 13px;
+}
 
-  .step::before {
-    content: "";
-    position: absolute;
-    left: 4px;
-    top: 5px;
-    width: 8px;
-    height: 8px;
-    border: 1px solid var(--line);
-    border-radius: 50%;
-  }
+/* -------------------------
+   메인 화면
+------------------------- */
 
-  .step:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    left: 8px;
-    top: 16px;
-    width: 1px;
-    height: 19px;
-    background: var(--line);
-  }
+.main-title {
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: 32px;
+  font-weight: 400;
+  margin-bottom: 35px;
+}
 
-  .step.done {
-    color: var(--muted);
-    text-decoration: line-through;
-  }
+.course-list {
+  border-top: 1px solid var(--line);
+}
 
-  .step.done::before {
-    background: var(--green);
-    border-color: var(--green);
-  }
+.course-card {
+  width: 100%;
+  padding: 21px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  text-align: left;
+  color: var(--ink);
+}
 
-  .step.current {
-    color: var(--blue);
-    font-weight: 600;
-  }
+.course-card:hover {
+  background: rgba(0,0,0,0.01);
+}
 
-  .step.current::before {
-    background: var(--blue);
-    border-color: var(--blue);
-  }
+.course-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  /* Memo */
-  .memo-box {
-    margin-top: 25px;
-    display: none;
-  }
+.course-name {
+  font-size: 16px;
+}
 
-  textarea {
-    width: 100%;
-    min-height: 80px;
-    resize: none;
-    padding: 12px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 5px;
-    color: var(--ink);
-    font: inherit;
-    font-size: 13px;
-  }
+.arrow {
+  color: var(--muted);
+  font-size: 16px;
+}
 
-  /* Modal */
-  .modal-bg {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(30, 30, 25, 0.18);
-    align-items: flex-end;
-    justify-content: center;
-  }
+.course-current {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
 
-  .modal {
-    width: min(100%, 500px);
-    background: var(--surface);
-    padding: 30px 28px 40px;
-    border-radius: 12px 12px 0 0;
-  }
+.course-status {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+  margin-right: 7px;
+}
 
-  .modal h2 {
-    font-family: Georgia, "Noto Serif KR", serif;
-    font-weight: 400;
-    margin: 0 0 10px;
-  }
+.course-status.finished {
+  background: var(--green);
+}
 
-  .modal p {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.6;
-    margin-bottom: 22px;
-  }
+.add-course {
+  margin-top: 28px;
+  background: transparent;
+  border: 0;
+  color: var(--blue);
+  padding: 5px 0;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
 
-  .option {
-    width: 100%;
-    text-align: left;
-    padding: 14px 0;
-    border: 0;
-    border-bottom: 1px solid var(--line);
-    background: transparent;
-    color: var(--ink);
-  }
+/* -------------------------
+   새 코스 만들기
+------------------------- */
 
-  .close {
-    margin-top: 20px;
-    color: var(--muted);
-  }
+.form-title {
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: 27px;
+  font-weight: 400;
+  margin-bottom: 35px;
+}
 
-  /* Add course */
-  .add-area {
-    margin-top: 55px;
-    text-align: center;
-  }
+.field {
+  margin-bottom: 24px;
+}
 
-  .add-button {
-    background: transparent;
-    border: 0;
-    color: var(--blue);
-    font-size: 13px;
-    letter-spacing: 0.5px;
-  }
+.field label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1.3px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
 
-  #courseInput {
-    display: none;
-    margin-top: 20px;
-  }
+input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  padding: 10px 0;
+  outline: none;
+  color: var(--ink);
+}
 
-  input {
-    width: 100%;
-    padding: 13px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 5px;
-    font: inherit;
-  }
+.step-input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.step-input-row input {
+  flex: 1;
+}
+
+.small-button {
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.add-step-button {
+  border: 0;
+  background: transparent;
+  color: var(--green);
+  padding: 7px 0;
+  font-size: 12px;
+}
+
+.back-button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 0;
+  margin-bottom: 38px;
+  font-size: 12px;
+}
+
+/* -------------------------
+   코스 상세
+------------------------- */
+
+.course-detail-title {
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: 28px;
+  font-weight: 400;
+  margin-bottom: 50px;
+}
+
+.current-step-title {
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: 25px;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.step-count {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* 타이머 */
+.timer-box {
+  text-align: center;
+  margin: 55px 0 25px;
+}
+
+.timer {
+  font-family: Georgia, serif;
+  color: var(--blue);
+  font-size: 58px;
+  letter-spacing: -2px;
+}
+
+.timer-caption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.action-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.text-button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 6px 0;
+  font-size: 12px;
+}
+
+.text-button.wine {
+  color: var(--wine);
+}
+
+/* 메모 */
+.memo-area {
+  display: none;
+  margin-top: 20px;
+}
+
+.memo-area.open {
+  display: block;
+}
+
+textarea {
+  width: 100%;
+  min-height: 75px;
+  resize: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 12px;
+  outline: none;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+/* 단계 목록 */
+.course-section {
+  margin-top: 55px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.course-section-title {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  margin-bottom: 22px;
+}
+
+.step-item {
+  position: relative;
+  padding: 0 0 22px 28px;
+  font-size: 14px;
+}
+
+.step-item::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 5px;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+
+.step-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 16px;
+  width: 1px;
+  height: 20px;
+  background: var(--line);
+}
+
+.step-item.done {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.step-item.done::before {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.step-item.current {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.step-item.current::before {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+
+/* 집중 안 됨 창 */
+.modal-background {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 30, 25, 0.18);
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal-background.open {
+  display: flex;
+}
+
+.modal {
+  width: min(100%, 560px);
+  background: var(--surface);
+  padding: 30px 28px 40px;
+  border-radius: 12px 12px 0 0;
+}
+
+.modal-title {
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+
+.modal-text {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.modal-option {
+  width: 100%;
+  padding: 15px 0;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.empty-message {
+  color: var(--muted);
+  font-size: 13px;
+  padding: 30px 0;
+}
+
 </style>
 </head>
 
@@ -297,412 +494,766 @@
 
 <div class="app">
 
-  <header>
-    <div class="brand">STILL</div>
-    <div class="date" id="date"></div>
-  </header>
+  <!-- 튜토리얼 -->
+  <section id="tutorial" class="screen active">
+    <div class="tutorial-number" id="tutorialNumber">01 / 03</div>
 
-  <main>
+    <h1 class="tutorial-title" id="tutorialTitle">
+      할 일을 하나의<br>코스로 만들어 보세요.
+    </h1>
+
+    <p class="tutorial-text" id="tutorialText">
+      공부, 요리, 청소처럼 어떤 일이든 괜찮습니다.
+      하나의 큰 일을 작은 단계로 나눌 수 있습니다.
+    </p>
+
+    <div class="tutorial-bottom">
+      <div class="dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+
+      <button class="primary-button" id="tutorialButton"
+        onclick="nextTutorial()">
+        NEXT →
+      </button>
+    </div>
+  </section>
+
+
+  <!-- 메인 화면 -->
+  <section id="home" class="screen">
+
+    <div class="header">
+      <div class="brand">STILL</div>
+      <div class="date" id="todayDate"></div>
+    </div>
+
+    <div class="label">YOUR DAY</div>
+    <h1 class="main-title">Today</h1>
+
+    <div class="course-list" id="courseList"></div>
+
+    <button class="add-course" onclick="showScreen('newCourse')">
+      + NEW COURSE
+    </button>
+
+  </section>
+
+
+  <!-- 새 코스 만들기 -->
+  <section id="newCourse" class="screen">
+
+    <button class="back-button"
+      onclick="showScreen('home')">
+      ← BACK
+    </button>
+
+    <h1 class="form-title">새로운 코스</h1>
+
+    <div class="field">
+      <label>COURSE NAME</label>
+      <input id="courseNameInput"
+        placeholder="예: 방 청소, 영어 숙제, 저녁 만들기">
+    </div>
+
+    <div class="field">
+      <label>STEPS</label>
+
+      <div id="stepInputs">
+        <div class="step-input-row">
+          <input class="step-input"
+            placeholder="첫 번째 단계">
+          <button class="small-button"
+            onclick="removeStep(this)">
+            REMOVE
+          </button>
+        </div>
+      </div>
+
+      <button class="add-step-button"
+        onclick="addStepInput()">
+        + 단계 추가
+      </button>
+    </div>
+
+    <button class="primary-button"
+      onclick="createNewCourse()">
+      CREATE COURSE →
+    </button>
+
+  </section>
+
+
+  <!-- 코스 상세 -->
+  <section id="courseDetail" class="screen">
+
+    <button class="back-button"
+      onclick="goHome()">
+      ← TODAY
+    </button>
+
+    <div class="label">THE COURSE</div>
+    <h1 class="course-detail-title" id="detailCourseName"></h1>
+
     <div class="label">CURRENTLY</div>
+    <div class="current-step-title" id="currentStepTitle"></div>
+    <div class="step-count" id="stepCount"></div>
 
-    <div class="task-title" id="currentTask">
-      아직 시작한 코스가 없습니다.
+    <div class="timer-box">
+      <div class="timer" id="timerDisplay">25:00</div>
+      <div class="timer-caption">
+        현재 단계와 함께 흐르는 시간
+      </div>
     </div>
 
-    <div class="task-detail" id="taskDetail">
-      새로운 일을 작은 단계로 만들어 보세요.
-    </div>
-
-    <div class="timer">
-      <div class="time" id="timer">25:00</div>
-      <div class="timer-label">현재 단계와 함께 흐르는 시간</div>
-    </div>
-
-    <button class="primary" id="startButton" onclick="toggleTimer()">
+    <button class="primary-button"
+      id="timerButton"
+      onclick="toggleTimer()">
       START →
     </button>
 
-    <div class="text-buttons">
-      <button class="text-button" onclick="toggleMemo()">
+    <div class="action-row">
+      <button class="text-button"
+        onclick="toggleMemo()">
         메모
       </button>
 
-      <button class="text-button focus-break" onclick="openFocusModal()">
+      <button class="text-button wine"
+        onclick="openFocusModal()">
         집중이 안 됨
       </button>
 
-      <button class="text-button" onclick="completeStep()">
+      <button class="text-button"
+        onclick="completeCurrentStep()">
         완료 →
       </button>
     </div>
 
-    <div class="memo-box" id="memoBox">
-      <textarea id="memo"
-        placeholder="짧게 남겨두세요. 다음에 돌아왔을 때 도움이 될 만큼만."></textarea>
+    <div class="memo-area" id="memoArea">
+      <textarea id="memoInput"
+        placeholder="다음에 돌아왔을 때 기억할 만큼만 적어두세요."
+        oninput="saveMemo()"></textarea>
     </div>
 
-    <section class="section">
-      <div class="section-title">THE COURSE</div>
-      <div id="courseList"></div>
-    </section>
-
-    <div class="add-area">
-      <button class="add-button" onclick="showCourseInput()">
-        + 새로운 코스 만들기
-      </button>
-
-      <div id="courseInput">
-        <input
-          id="newCourse"
-          placeholder="무엇을 시작하고 싶나요?"
-          onkeydown="if(event.key === 'Enter') createCourse()"
-        >
-      </div>
+    <div class="course-section">
+      <div class="course-section-title">THE COURSE</div>
+      <div id="detailSteps"></div>
     </div>
-  </main>
+
+  </section>
 
 </div>
 
 
 <!-- 집중이 안 될 때 -->
-<div class="modal-bg" id="focusModal">
+<div class="modal-background" id="focusModal">
   <div class="modal">
-    <h2>잠깐 멈춰도 됩니다.</h2>
-    <p>
+
+    <h2 class="modal-title">잠깐 멈춰도 됩니다.</h2>
+
+    <p class="modal-text">
       지금 필요한 것은 의지가 아니라,
       다음 행동을 조금 바꾸는 것일 수도 있습니다.
     </p>
 
-    <button class="option" onclick="reduceTask()">
+    <button class="modal-option"
+      onclick="fiveMinuteMode()">
       5분만 시작하기
     </button>
 
-    <button class="option" onclick="minimumTask()">
+    <button class="modal-option"
+      onclick="minimumMode()">
       오늘의 최소 행동으로 줄이기
     </button>
 
-    <button class="option" onclick="pauseTask()">
+    <button class="modal-option"
+      onclick="pauseCourse()">
       여기서 잠시 멈추기
     </button>
 
-    <button class="text-button close" onclick="closeFocusModal()">
+    <button class="text-button"
+      style="margin-top:15px"
+      onclick="closeFocusModal()">
       닫기
     </button>
+
   </div>
 </div>
 
 
 <script>
 
-  /* -------------------------
-     기본 데이터
-  ------------------------- */
+/* -------------------------
+   데이터
+------------------------- */
 
-  let course = [];
-  let currentIndex = 0;
+let courses = [];
+let selectedCourseId = null;
 
-  let seconds = 25 * 60;
-  let timerRunning = false;
-  let timerInterval;
+let tutorialStep = 0;
 
-
-  /* 날짜 표시 */
-  const today = new Date();
-
-  document.getElementById("date").textContent =
-    today.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric"
-    });
+let seconds = 25 * 60;
+let timerRunning = false;
+let timerInterval = null;
 
 
-  /* -------------------------
-     코스 만들기
-  ------------------------- */
+/* -------------------------
+   튜토리얼
+------------------------- */
 
-  function showCourseInput() {
-    const inputArea = document.getElementById("courseInput");
+const tutorialPages = [
+  {
+    title: "할 일을 하나의<br>코스로 만들어 보세요.",
+    text: "공부, 요리, 청소처럼 어떤 일이든 괜찮습니다. 하나의 큰 일을 작은 단계로 나눌 수 있습니다."
+  },
+  {
+    title: "코스 안에서는<br>하나씩 이어갑니다.",
+    text: "지금 해야 할 단계 하나에 집중하세요. 끝나면 자연스럽게 다음 단계로 이어집니다."
+  },
+  {
+    title: "코스는 하나가<br>아니어도 됩니다.",
+    text: "오늘 해야 할 여러 일을 만들어 두고, 필요할 때 하나씩 열어 이어갈 수 있습니다."
+  }
+];
 
-    inputArea.style.display =
-      inputArea.style.display === "block" ? "none" : "block";
 
-    document.getElementById("newCourse").focus();
+function nextTutorial() {
+
+  tutorialStep++;
+
+  if (tutorialStep >= tutorialPages.length) {
+    showScreen("home");
+    return;
   }
 
+  const page = tutorialPages[tutorialStep];
 
-  function createCourse() {
+  document.getElementById("tutorialNumber").textContent =
+    `0${tutorialStep + 1} / 03`;
 
-    const input = document.getElementById("newCourse");
-    const goal = input.value.trim();
+  document.getElementById("tutorialTitle").innerHTML =
+    page.title;
 
-    if (!goal) {
-      return;
+  document.getElementById("tutorialText").textContent =
+    page.text;
+
+  const dots = document.querySelectorAll(".dot");
+
+  dots.forEach((dot, index) => {
+    dot.classList.toggle("active", index === tutorialStep);
+  });
+
+  if (tutorialStep === tutorialPages.length - 1) {
+    document.getElementById("tutorialButton").textContent =
+      "ENTER STILL →";
+  }
+}
+
+
+/* -------------------------
+   화면 이동
+------------------------- */
+
+function showScreen(screenId) {
+
+  document.querySelectorAll(".screen")
+    .forEach(screen => screen.classList.remove("active"));
+
+  document.getElementById(screenId)
+    .classList.add("active");
+
+  if (screenId === "home") {
+    renderHome();
+  }
+}
+
+
+/* -------------------------
+   날짜
+------------------------- */
+
+const now = new Date();
+
+document.getElementById("todayDate").textContent =
+  now.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric"
+  });
+
+
+/* -------------------------
+   단계 입력 추가
+------------------------- */
+
+function addStepInput() {
+
+  const container =
+    document.getElementById("stepInputs");
+
+  const row =
+    document.createElement("div");
+
+  row.className = "step-input-row";
+
+  row.innerHTML = `
+    <input class="step-input" placeholder="다음 단계">
+    <button class="small-button" onclick="removeStep(this)">
+      REMOVE
+    </button>
+  `;
+
+  container.appendChild(row);
+}
+
+
+function removeStep(button) {
+
+  const rows =
+    document.querySelectorAll(".step-input-row");
+
+  if (rows.length <= 1) {
+    return;
+  }
+
+  button.parentElement.remove();
+}
+
+
+/* -------------------------
+   새 코스 만들기
+------------------------- */
+
+function createNewCourse() {
+
+  const name =
+    document.getElementById("courseNameInput")
+      .value.trim();
+
+  const stepInputs =
+    document.querySelectorAll(".step-input");
+
+  const steps = [];
+
+  stepInputs.forEach(input => {
+    if (input.value.trim()) {
+      steps.push({
+        title: input.value.trim(),
+        memo: ""
+      });
+    }
+  });
+
+  if (!name) {
+    alert("코스 이름을 입력해 주세요.");
+    return;
+  }
+
+  if (steps.length === 0) {
+    alert("적어도 하나의 단계를 만들어 주세요.");
+    return;
+  }
+
+  const newCourse = {
+    id: Date.now(),
+    name: name,
+    steps: steps,
+    currentStep: 0,
+    paused: false
+  };
+
+  courses.push(newCourse);
+
+  /* 입력창 초기화 */
+  document.getElementById("courseNameInput").value = "";
+
+  document.getElementById("stepInputs").innerHTML = `
+    <div class="step-input-row">
+      <input class="step-input" placeholder="첫 번째 단계">
+      <button class="small-button" onclick="removeStep(this)">
+        REMOVE
+      </button>
+    </div>
+  `;
+
+  renderHome();
+  showScreen("home");
+}
+
+
+/* -------------------------
+   메인 화면
+------------------------- */
+
+function renderHome() {
+
+  const list =
+    document.getElementById("courseList");
+
+  list.innerHTML = "";
+
+  if (courses.length === 0) {
+
+    list.innerHTML = `
+      <div class="empty-message">
+        아직 만들어진 코스가 없습니다.<br>
+        오늘 해야 할 일 하나부터 만들어 보세요.
+      </div>
+    `;
+
+    return;
+  }
+
+  courses.forEach(course => {
+
+    const finished =
+      course.currentStep >= course.steps.length;
+
+    const currentText = finished
+      ? "코스를 마쳤습니다."
+      : course.steps[course.currentStep].title;
+
+    const card =
+      document.createElement("button");
+
+    card.className = "course-card";
+
+    card.onclick = () => openCourse(course.id);
+
+    card.innerHTML = `
+      <div class="course-top">
+        <div class="course-name">${course.name}</div>
+        <div class="arrow">→</div>
+      </div>
+
+      <div class="course-current">
+        <span class="course-status ${finished ? "finished" : ""}"></span>
+        ${finished ? "완료 · " : "현재 · "}
+        ${currentText}
+      </div>
+    `;
+
+    list.appendChild(card);
+  });
+}
+
+
+/* -------------------------
+   코스 열기
+------------------------- */
+
+function openCourse(id) {
+
+  selectedCourseId = id;
+
+  resetTimer();
+
+  renderCourseDetail();
+
+  showScreen("courseDetail");
+}
+
+
+function getSelectedCourse() {
+
+  return courses.find(
+    course => course.id === selectedCourseId
+  );
+}
+
+
+function renderCourseDetail() {
+
+  const course = getSelectedCourse();
+
+  if (!course) return;
+
+  document.getElementById("detailCourseName").textContent =
+    course.name;
+
+  const finished =
+    course.currentStep >= course.steps.length;
+
+  if (finished) {
+
+    document.getElementById("currentStepTitle").textContent =
+      "이 코스를 마쳤습니다.";
+
+    document.getElementById("stepCount").textContent =
+      "모든 단계 완료";
+
+  } else {
+
+    document.getElementById("currentStepTitle").textContent =
+      course.steps[course.currentStep].title;
+
+    document.getElementById("stepCount").textContent =
+      `단계 ${course.currentStep + 1} / ${course.steps.length}`;
+  }
+
+  renderSteps();
+
+  loadMemo();
+}
+
+
+function renderSteps() {
+
+  const course = getSelectedCourse();
+
+  const container =
+    document.getElementById("detailSteps");
+
+  container.innerHTML = "";
+
+  course.steps.forEach((step, index) => {
+
+    const element =
+      document.createElement("div");
+
+    element.className = "step-item";
+
+    if (index < course.currentStep) {
+      element.classList.add("done");
     }
 
-    /*
-      현재는 간단한 규칙 기반 코스 생성.
-      나중에 실제 AI API와 연결하면
-      이 부분을 AI가 만든 단계로 바꾸면 됨.
-    */
+    if (index === course.currentStep) {
+      element.classList.add("current");
+    }
 
-    course = [
-      "준비하기",
-      goal + " 시작하기",
-      "중간 상태 확인하기",
-      goal + " 마무리하기"
-    ];
+    element.textContent = step.title;
 
-    currentIndex = 0;
+    container.appendChild(element);
+  });
+}
 
-    input.value = "";
-    document.getElementById("courseInput").style.display = "none";
 
-    renderCourse();
-    updateCurrentTask();
+/* -------------------------
+   단계 완료
+------------------------- */
+
+function completeCurrentStep() {
+
+  const course = getSelectedCourse();
+
+  if (!course) return;
+
+  if (course.currentStep < course.steps.length) {
+
+    course.currentStep++;
 
     resetTimer();
+
+    renderCourseDetail();
+  }
+}
+
+
+function goHome() {
+
+  clearInterval(timerInterval);
+  timerRunning = false;
+
+  showScreen("home");
+}
+
+
+/* -------------------------
+   타이머
+------------------------- */
+
+function updateTimer() {
+
+  const minutes =
+    Math.floor(seconds / 60);
+
+  const remaining =
+    seconds % 60;
+
+  document.getElementById("timerDisplay").textContent =
+    `${String(minutes).padStart(2, "0")}:${String(remaining).padStart(2, "0")}`;
+}
+
+
+function toggleTimer() {
+
+  const course = getSelectedCourse();
+
+  if (!course ||
+      course.currentStep >= course.steps.length) {
+    return;
   }
 
+  if (timerRunning) {
 
-  /* -------------------------
-     코스 화면 표시
-  ------------------------- */
+    clearInterval(timerInterval);
 
-  function renderCourse() {
+    timerRunning = false;
 
-    const list = document.getElementById("courseList");
+    document.getElementById("timerButton").textContent =
+      "CONTINUE →";
 
-    list.innerHTML = "";
-
-    course.forEach((step, index) => {
-
-      const stepElement = document.createElement("div");
-
-      stepElement.className = "step";
-
-      if (index < currentIndex) {
-        stepElement.classList.add("done");
-      }
-
-      if (index === currentIndex) {
-        stepElement.classList.add("current");
-      }
-
-      stepElement.textContent = step;
-
-      list.appendChild(stepElement);
-    });
+    return;
   }
 
+  timerRunning = true;
 
-  function updateCurrentTask() {
+  document.getElementById("timerButton").textContent =
+    "PAUSE";
 
-    const currentTask =
-      document.getElementById("currentTask");
+  timerInterval = setInterval(() => {
 
-    const taskDetail =
-      document.getElementById("taskDetail");
+    if (seconds > 0) {
 
-    if (course.length === 0) {
-      currentTask.textContent =
-        "아직 시작한 코스가 없습니다.";
+      seconds--;
+      updateTimer();
 
-      taskDetail.textContent =
-        "새로운 일을 작은 단계로 만들어 보세요.";
-
-      return;
-    }
-
-    if (currentIndex >= course.length) {
-      currentTask.textContent =
-        "오늘의 코스를 마쳤습니다.";
-
-      taskDetail.textContent =
-        "다음에 이어갈 일은 새로운 코스로 만들 수 있습니다.";
-
-      return;
-    }
-
-    currentTask.textContent = course[currentIndex];
-
-    taskDetail.textContent =
-      `단계 ${currentIndex + 1} / ${course.length}`;
-  }
-
-
-  /* -------------------------
-     단계 완료
-  ------------------------- */
-
-  function completeStep() {
-
-    if (course.length === 0) {
-      return;
-    }
-
-    if (currentIndex < course.length) {
-      currentIndex++;
-    }
-
-    renderCourse();
-    updateCurrentTask();
-
-    resetTimer();
-
-    document.getElementById("memo").value = "";
-  }
-
-
-  /* -------------------------
-     타이머
-  ------------------------- */
-
-  function updateTimerDisplay() {
-
-    const minutes =
-      Math.floor(seconds / 60);
-
-    const remainingSeconds =
-      seconds % 60;
-
-    document.getElementById("timer").textContent =
-      `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
-  }
-
-
-  function toggleTimer() {
-
-    if (timerRunning) {
+    } else {
 
       clearInterval(timerInterval);
+
       timerRunning = false;
 
-      document.getElementById("startButton").textContent =
-        "CONTINUE →";
+      document.getElementById("timerButton").textContent =
+        "TIME IS UP";
 
-      return;
+      alert("시간이 끝났습니다. 하지만 할 일이 끝난 것은 아닙니다.");
     }
 
-    timerRunning = true;
+  }, 1000);
+}
 
-    document.getElementById("startButton").textContent =
-      "PAUSE";
 
-    timerInterval = setInterval(() => {
+function resetTimer() {
 
-      if (seconds > 0) {
+  clearInterval(timerInterval);
 
-        seconds--;
-        updateTimerDisplay();
+  timerRunning = false;
 
-      } else {
+  seconds = 25 * 60;
 
-        clearInterval(timerInterval);
+  updateTimer();
 
-        timerRunning = false;
+  const button =
+    document.getElementById("timerButton");
 
-        document.getElementById("startButton").textContent =
-          "TIME IS UP";
+  if (button) {
+    button.textContent = "START →";
+  }
+}
 
-        alert("시간이 끝났습니다. 하지만 할 일이 끝난 것은 아닙니다.");
-      }
 
-    }, 1000);
+/* -------------------------
+   메모
+------------------------- */
+
+function toggleMemo() {
+
+  document.getElementById("memoArea")
+    .classList.toggle("open");
+}
+
+
+function loadMemo() {
+
+  const course = getSelectedCourse();
+
+  const memoInput =
+    document.getElementById("memoInput");
+
+  if (!course ||
+      course.currentStep >= course.steps.length) {
+
+    memoInput.value = "";
+    return;
   }
 
+  memoInput.value =
+    course.steps[course.currentStep].memo || "";
+}
 
-  function resetTimer() {
 
-    clearInterval(timerInterval);
+function saveMemo() {
 
-    timerRunning = false;
+  const course = getSelectedCourse();
 
-    seconds = 25 * 60;
-
-    updateTimerDisplay();
-
-    document.getElementById("startButton").textContent =
-      "START →";
+  if (!course ||
+      course.currentStep >= course.steps.length) {
+    return;
   }
 
+  course.steps[course.currentStep].memo =
+    document.getElementById("memoInput").value;
+}
 
-  /* -------------------------
-     메모
-  ------------------------- */
 
-  function toggleMemo() {
+/* -------------------------
+   집중이 안 될 때
+------------------------- */
 
-    const memoBox =
-      document.getElementById("memoBox");
+function openFocusModal() {
 
-    memoBox.style.display =
-      memoBox.style.display === "block"
-        ? "none"
-        : "block";
+  document.getElementById("focusModal")
+    .classList.add("open");
+}
+
+
+function closeFocusModal() {
+
+  document.getElementById("focusModal")
+    .classList.remove("open");
+}
+
+
+function fiveMinuteMode() {
+
+  clearInterval(timerInterval);
+
+  timerRunning = false;
+
+  seconds = 5 * 60;
+
+  updateTimer();
+
+  document.getElementById("timerButton").textContent =
+    "START 5 MINUTES →";
+
+  closeFocusModal();
+}
+
+
+function minimumMode() {
+
+  const course = getSelectedCourse();
+
+  if (!course ||
+      course.currentStep >= course.steps.length) {
+    return;
   }
 
+  document.getElementById("stepCount").textContent =
+    "오늘은 가장 작은 부분만 해도 됩니다.";
 
-  /* -------------------------
-     집중이 안 될 때
-  ------------------------- */
-
-  function openFocusModal() {
-    document.getElementById("focusModal").style.display =
-      "flex";
-  }
-
-  function closeFocusModal() {
-    document.getElementById("focusModal").style.display =
-      "none";
-  }
+  closeFocusModal();
+}
 
 
-  function reduceTask() {
+function pauseCourse() {
 
-    closeFocusModal();
+  clearInterval(timerInterval);
 
-    document.getElementById("taskDetail").textContent =
-      "지금은 이 일에 5분만 써도 충분합니다.";
+  timerRunning = false;
 
-    seconds = 5 * 60;
+  document.getElementById("timerButton").textContent =
+    "WHEN YOU RETURN →";
 
-    updateTimerDisplay();
-  }
-
-
-  function minimumTask() {
-
-    closeFocusModal();
-
-    if (course.length > 0 &&
-        currentIndex < course.length) {
-
-      document.getElementById("currentTask").textContent =
-        course[currentIndex] + " — 가장 작은 부분만";
-
-      document.getElementById("taskDetail").textContent =
-        "오늘은 여기까지만 해도 됩니다.";
-    }
-  }
+  closeFocusModal();
+}
 
 
-  function pauseTask() {
-
-    clearInterval(timerInterval);
-
-    timerRunning = false;
-
-    document.getElementById("startButton").textContent =
-      "WHEN YOU RETURN →";
-
-    closeFocusModal();
-
-    document.getElementById("taskDetail").textContent =
-      "여기서 멈췄습니다. 돌아오면 이어서 시작할 수 있습니다.";
-  }
-
-
-  updateTimerDisplay();
+/* 첫 타이머 표시 */
+updateTimer();
 
 </script>
 
